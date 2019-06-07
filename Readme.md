@@ -45,4 +45,4 @@ query {
 
 ## License
 
-[MIT](LICENSE)
+[Apache Version 2.0](LICENSE)
