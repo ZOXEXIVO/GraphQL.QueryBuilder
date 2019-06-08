@@ -30,7 +30,7 @@ namespace GraphQL.QueryBuilder.Builders
             return new GraphGraphQueryBuilder<TEntity, TProperty>(builder.Node, lastNode);
         }
         
-        private static QueryNode BuildTreeForNode(QueryNode node, string currentPath, List<string> paths)
+        private static QueryNode<TEntity> BuildTreeForNode<TEntity>(QueryNode<TEntity> node, string currentPath, List<string> paths)
         {
             if (currentPath == null || node == null)
                 return null;

@@ -1,6 +1,8 @@
 # GraphQL.QueryBuilder
 
-GraphQL.QueryBuilder is simple utility for creating strong typed GraphQL queries  for .NET objects in EntityFramework Include-style
+GraphQL.QueryBuilder is simple utility for creating strong typed GraphQL queries  for .NET objects in EntityFramework Include-style.
+
+At current state work only on simple queries.
 
 
 **Code**
@@ -8,7 +10,7 @@ GraphQL.QueryBuilder is simple utility for creating strong typed GraphQL queries
 ```csharp
 static void Main(string[] args)
 {
-    var renderedQuery = GraphQuery.Query<User>()
+    var renderedQuery = GraphQuery.Query<User>(user => user.FirstName == "FIRSTNAME")
         .Include(x => x.Friends).ThenInclude(x => x.Department)
         .Include(x => x.FirstName)
         .Include(x => x.Department.Id)
@@ -25,7 +27,7 @@ static void Main(string[] args)
 **Result**
 
 ```js
-query {
+query (firstName : "FIRSTNAME"){
    friends {
        department {
            parent {

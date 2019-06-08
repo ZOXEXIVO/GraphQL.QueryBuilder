@@ -1,5 +1,6 @@
 using System.Linq;
 using GraphQL.QueryBuilder.Nodes;
+using GraphQL.QueryBuilder.Tests.Queries;
 using Xunit;
 
 namespace GraphQL.QueryBuilder.Tests
@@ -9,7 +10,7 @@ namespace GraphQL.QueryBuilder.Tests
         [Fact]
         public void Query_Initialize()
         {
-            var queryNode = new QueryNode();
+            var queryNode = new QueryNode<TestUser>();
             
             Assert.Null(queryNode.Value);
             Assert.Empty(queryNode.Childs);
@@ -18,7 +19,7 @@ namespace GraphQL.QueryBuilder.Tests
         [Fact]
         public void Query_AddChild()
         {
-            var queryNode = new QueryNode();
+            var queryNode = new QueryNode<TestUser>();
 
             var addedNode = queryNode.AddChild("CHILD");
 

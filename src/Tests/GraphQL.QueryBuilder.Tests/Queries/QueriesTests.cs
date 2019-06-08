@@ -8,7 +8,7 @@ namespace GraphQL.QueryBuilder.Tests.Queries
         [Fact]
         public void Query_Render_IsCorrect()
         {
-            var renderedQuery = GraphQuery.Query<TestUser>()
+            var renderedQuery = GraphQuery.Query<TestUser>(user => user.FirstName == "FIRSTNAME")
                 .Include(x => x.Friends).ThenInclude(x => x.Department)
                 .Include(x => x.FirstName)
                 .Include(x => x.Department.Id)
@@ -18,7 +18,7 @@ namespace GraphQL.QueryBuilder.Tests.Queries
                 .Include(x => x.Friends).ThenInclude(x => x.Department.Parent.Parent)
                 .Render();
 
-            string correctQuery = @"query {
+            string correctQuery = @"query (firstName : ""FIRSTNAME"") {
                                         friends {
                                             department {
                                                 parent {

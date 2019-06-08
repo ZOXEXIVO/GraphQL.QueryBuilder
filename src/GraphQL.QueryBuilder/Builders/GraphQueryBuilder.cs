@@ -1,27 +1,30 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using GraphQL.QueryBuilder.Nodes;
+using GraphQL.QueryBuilder.Utils;
 
 namespace GraphQL.QueryBuilder.Builders
 {
-    public interface IGraphQuery<out TEntity>
+    public interface IGraphQuery<TEntity>
     {
-        QueryNode Node { get; }
+        QueryNode<TEntity> Node { get; }
     }
 
-    public interface IGraphQueryBuilder<out TEntity, out TProperty> : IGraphQuery<TEntity>
+    public interface IGraphQueryBuilder<TEntity, out TProperty> : IGraphQuery<TEntity>
     {
-        QueryNode LastNode { get; }
+        QueryNode<TEntity> LastNode { get; }
+        
         string Render();
     }
     
     internal class GraphGraphQueryBuilder<TEntity, TProperty> : IGraphQueryBuilder<TEntity, TProperty>
     {
-        public QueryNode Node { get; }
-        public QueryNode LastNode { get; }
+        public QueryNode<TEntity> Node { get; }
+        public QueryNode<TEntity> LastNode { get; }
 
-        public GraphGraphQueryBuilder(QueryNode node, QueryNode lastNode)
+        public GraphGraphQueryBuilder(QueryNode<TEntity> node, QueryNode<TEntity> lastNode)
         {
             Node = node;
             LastNode = lastNode;
@@ -32,7 +35,15 @@ namespace GraphQL.QueryBuilder.Builders
         {
             var builder = new StringBuilder();
 
-            builder.Append("query {");
+            builder.Append("query");
+            
+            if (Node.HasFilter())
+            {
+                builder.AppendFormat(" {0}",  RenderFilter(Node));
+            }
+            
+            builder.Append(" {");
+           
             builder.Append(Environment.NewLine);
 
             const int startPadding = 1;
@@ -48,8 +59,52 @@ namespace GraphQL.QueryBuilder.Builders
 
             return builder.ToString();
         }
-        
-        private string RenderObject(QueryNode root, bool printDot, int padding)
+
+        private string RenderFilter(QueryNode<TEntity> node)
+        {
+            if (node.FilterExpression == null)
+                return string.Empty;
+            
+            var builder = new StringBuilder();
+
+            builder.Append("(");
+            
+            var expressionBody = node.FilterExpression.Body;
+
+            if (expressionBody.NodeType != ExpressionType.Equal)
+            {
+                throw new NotSupportedException();
+            }
+
+            if (expressionBody is BinaryExpression binaryExpression)
+            {
+                var left = binaryExpression.Left as MemberExpression;
+                var right = binaryExpression.Right  as ConstantExpression;
+
+                builder.Append($"{left.Member.Name.ToCamelCase()} : {GetTypedValue(right)}");
+            }
+            else
+            {
+                //TODO - Logical expression
+                throw new NotSupportedException();
+            }
+            
+            builder.Append(")");
+            
+            return builder.ToString();
+
+            string GetTypedValue(ConstantExpression expr)
+            {
+                if (expr.Type == typeof(string))
+                {
+                    return $"\"{expr.Value}\"";
+                }
+
+                return expr.Value.ToString();
+            }
+        }
+
+        private string RenderObject(QueryNode<TEntity> root, bool printDot, int padding)
         {
             var builder = new StringBuilder();
 
