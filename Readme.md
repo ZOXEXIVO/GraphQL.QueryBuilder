@@ -10,7 +10,9 @@ At current state work only on simple queries.
 ```csharp
 static void Main(string[] args)
 {
-    var renderedQuery = GraphQuery.Query<User>(user => user.FirstName == "FIRSTNAME")
+    string queryName = "queryName";
+    
+    var renderedQuery = GraphQuery.Query<User>(queryName, user => user.FirstName == "FIRSTNAME")
         .Include(x => x.Friends).ThenInclude(x => x.Department)
         .Include(x => x.FirstName)
         .Include(x => x.Department.Id)
@@ -27,22 +29,24 @@ static void Main(string[] args)
 **Result**
 
 ```js
-query (firstName : "FIRSTNAME"){
-   friends {
-       department {
-           parent {
-               id,
-               name,
-               parent
-           }
-       }
-   },
-   firstName,
-   department {
-       id,
-       name
-   }
-}
+query {
+    queryName (firstName : ""FIRSTNAME"") {
+         friends {
+             department {
+                 parent {
+                    id,
+                    name,
+                    parent
+                 }
+             }
+         },
+         firstName,
+         department {
+            id,
+            name
+         }
+     }
+ }
 ```
 
 ## License
