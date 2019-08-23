@@ -12,6 +12,7 @@ namespace GraphQL.QueryBuilder.Tests
         {
             var queryNode = new QueryNode<TestUser>();
             
+            Assert.Null(queryNode.Name);
             Assert.Null(queryNode.Value);
             Assert.Empty(queryNode.Childs);
         }
@@ -19,10 +20,11 @@ namespace GraphQL.QueryBuilder.Tests
         [Fact]
         public void Query_AddChild()
         {
-            var queryNode = new QueryNode<TestUser>();
+            var queryNode = new QueryNode<TestUser>("NAME");
 
             var addedNode = queryNode.AddChild("CHILD");
 
+            Assert.Equal("NAME", addedNode.Name);
             Assert.Equal("CHILD", addedNode.Value);
             Assert.Equal("CHILD", queryNode.Childs.Single().Value);
         }

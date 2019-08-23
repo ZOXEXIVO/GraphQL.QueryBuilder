@@ -35,7 +35,9 @@ namespace GraphQL.QueryBuilder.Builders
         {
             var builder = new StringBuilder();
 
-            builder.Append("query");
+            builder.AppendLine("query { ");
+            
+            builder.Append(" " + Node.Name);
             
             if (Node.HasFilter())
             {
@@ -54,7 +56,9 @@ namespace GraphQL.QueryBuilder.Builders
                 builder.Append(RenderObject(childrens, index == Node.Childs.Count - 1, startPadding));
             }
 
-            builder.Append("}");
+            builder.AppendLine(" " + "}");
+            builder.AppendLine("}");
+            
             builder.Append(Environment.NewLine);
 
             return builder.ToString();

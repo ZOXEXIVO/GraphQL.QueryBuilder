@@ -7,7 +7,9 @@ namespace GraphQL.QueryBuilder.Example
     {
         static void Main(string[] args)
         {
-            var query = GraphQuery.Query<User>(user => user.FirstName == "FIRSTNAME")
+            string queryName = "qname";
+            
+            var query = GraphQuery.Query<User>(queryName, user => user.FirstName == "FIRSTNAME")
                 .Include(x => x.Friends).ThenInclude(x => x.Department)
                 .Include(x => x.FirstName)
                 .Include(x => x.Department.Id)

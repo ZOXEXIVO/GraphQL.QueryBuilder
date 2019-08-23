@@ -6,14 +6,16 @@ namespace GraphQL.QueryBuilder.Nodes
 {
     public class QueryNode<TEntity>
     {
+        public string Name { get; }
         public string Value { get; }
 
         public Expression<Func<TEntity, bool>> FilterExpression { get; }
 
         public readonly List<QueryNode<TEntity>> Childs = new List<QueryNode<TEntity>>();
 
-        public QueryNode(string value = null, Expression<Func<TEntity, bool>> filterExpression = null)
+        public QueryNode(string name = null,string value = null, Expression<Func<TEntity, bool>> filterExpression = null)
         {
+            Name = name;
             Value = value;
 
             FilterExpression = filterExpression;
@@ -26,7 +28,7 @@ namespace GraphQL.QueryBuilder.Nodes
 
         public QueryNode<TEntity> AddChild(string value)
         {
-            var node = new QueryNode<TEntity>(value);
+            var node = new QueryNode<TEntity>(name: null, value: value);
         
             Childs.Add(node);
         

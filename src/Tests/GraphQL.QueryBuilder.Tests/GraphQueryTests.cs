@@ -7,7 +7,7 @@ namespace GraphQL.QueryBuilder.Tests
         [Fact]
         public void Query_Create_IsCorrect()
         {
-            var query = GraphQuery.Query<GraphQueryTests>();
+            var query = GraphQuery.Query<GraphQueryTests>("queryName");
 
             Assert.Null(query.LastNode);
             Assert.Null(query.Node.Value);

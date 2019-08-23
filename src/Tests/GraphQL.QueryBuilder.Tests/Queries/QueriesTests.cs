@@ -8,7 +8,7 @@ namespace GraphQL.QueryBuilder.Tests.Queries
         [Fact]
         public void Query_Render_IsCorrect()
         {
-            var renderedQuery = GraphQuery.Query<TestUser>(user => user.FirstName == "FIRSTNAME")
+            var renderedQuery = GraphQuery.Query<TestUser>("queryName", user => user.FirstName == "FIRSTNAME")
                 .Include(x => x.Friends).ThenInclude(x => x.Department)
                 .Include(x => x.FirstName)
                 .Include(x => x.Department.Id)
@@ -18,24 +18,26 @@ namespace GraphQL.QueryBuilder.Tests.Queries
                 .Include(x => x.Friends).ThenInclude(x => x.Department.Parent.Parent)
                 .Render();
 
-            string correctQuery = @"query (firstName : ""FIRSTNAME"") {
-                                        friends {
+            string correctQuery = @"query {
+                                     queryName (firstName : ""FIRSTNAME"") {
+                                            friends {
+                                                  department {
+                                                      parent {
+                                                          id,
+                                                          name,
+                                                          parent
+                                                      }
+                                                  }
+                                            },
+                                            firstName,
                                             department {
-                                                parent {
-                                                    id,
-                                                    name,
-                                                    parent
-                                                }
+                                                 id,
+                                                 name
                                             }
-                                        },
-                                        firstName,
-                                        department {
-                                            id,
-                                            name
-                                        }
+                                       }
                                     }";
-            
-            
+
+
             Assert.Equal(ClearQuery(correctQuery), ClearQuery(renderedQuery));
 
             string ClearQuery(string query)
